@@ -3,15 +3,12 @@ package org.aameliah.crisisplugin.listeners;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.event.HoverEventSource;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.Style;
 import org.bukkit.Bukkit;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.jetbrains.annotations.NotNull;
 
 public class ChatPrefixes implements Listener {
 
@@ -32,10 +29,10 @@ public class ChatPrefixes implements Listener {
                 .hoverEvent(HoverEvent.showText(
                         Component.text("Level: ", NamedTextColor.DARK_AQUA)
                                 .append(Component.text(player.getLevel(), NamedTextColor.AQUA))
-                                .append(Component.newline())
+                                .appendNewline()
                                 .append(Component.text("Deaths: ", NamedTextColor.DARK_AQUA))
                                 .append(Component.text(player.getStatistic(Statistic.DEATHS), NamedTextColor.AQUA))
-                                .append(Component.newline())
+                                .appendNewline()
                                 .append(Component.text("Mob kills: ", NamedTextColor.DARK_AQUA))
                                 .append(Component.text(player.getStatistic(Statistic.MOB_KILLS), NamedTextColor.AQUA))
                 ))

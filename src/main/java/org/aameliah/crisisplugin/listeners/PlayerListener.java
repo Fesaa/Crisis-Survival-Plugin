@@ -2,7 +2,7 @@ package org.aameliah.crisisplugin.listeners;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.aameliah.crisisplugin.CrisisPlugin;
+import org.aameliah.crisisplugin.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
@@ -15,9 +15,9 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         Server server = Bukkit.getServer();
-        Component joinMessage = this.playerComponent(e.getPlayer())
+        Component joinMessage = Utils.playerComponent(e.getPlayer())
                 .append(Component.text(" has joined the ", NamedTextColor.AQUA))
-                .append(CrisisPlugin.getCrisisServerColour())
+                .append(Utils.getCrisisServerColour())
                 .append(Component.text(" ", NamedTextColor.AQUA))
                 .append(Component.text(server.getOnlinePlayers().size(), NamedTextColor.AQUA))
                 .append(Component.text("/", NamedTextColor.AQUA))
@@ -29,9 +29,9 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
         Server server = Bukkit.getServer();
-        Component quitMessage = this.playerComponent(e.getPlayer())
+        Component quitMessage = Utils.playerComponent(e.getPlayer())
                 .append(Component.text(" has left the ", NamedTextColor.AQUA))
-                .append(CrisisPlugin.getCrisisServerColour())
+                .append(Utils.getCrisisServerColour())
                 .append(Component.text(" ", NamedTextColor.AQUA))
                 .append(Component.text(server.getOnlinePlayers().size() - 1, NamedTextColor.AQUA))
                 .append(Component.text("/", NamedTextColor.AQUA))
@@ -52,7 +52,7 @@ public class PlayerListener implements Listener {
             }
         }
         server.sendMessage(
-                this.playerComponent(e.getPlayer())
+                Utils.playerComponent(e.getPlayer())
                         .append(Component.text(" went to sleep! "))
                         .append(Component.text(sleepingPlayers + " of " + onlinePlayers + " sleeping!"))
                         .color(NamedTextColor.BLUE)
@@ -70,7 +70,7 @@ public class PlayerListener implements Listener {
             }
         }
         server.sendMessage(
-                this.playerComponent(e.getPlayer())
+                Utils.playerComponent(e.getPlayer())
                         .append(Component.text(" left their bed! "))
                         .append(Component.text(sleepingPlayers + " of " + onlinePlayers + " sleeping!"))
                         .color(NamedTextColor.BLUE)
@@ -79,12 +79,13 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerLevelChangeEvent(PlayerLevelChangeEvent e) {
-        if (e.getNewLevel() % 10 != 0) {
+        if (e.getNewLevel() % 10 != 0 || e.getNewLevel() < e.getOldLevel()) {
             return;
         }
 
+
         Bukkit.getServer().sendMessage(
-                this.playerComponent(e.getPlayer())
+                Utils.playerComponent(e.getPlayer())
                         .append(Component.text(" leveled up to ", NamedTextColor.AQUA))
                         .append(Component.text(e.getNewLevel(), NamedTextColor.LIGHT_PURPLE))
                         .append(Component.text("!", NamedTextColor.AQUA))
@@ -94,16 +95,14 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerChangedWorldEvent(PlayerChangedWorldEvent e) {
         Bukkit.getServer().sendMessage(
-                this.playerComponent(e.getPlayer())
+                Utils.playerComponent(e.getPlayer())
                         .append(Component.text( " is now in the ", NamedTextColor.AQUA))
                         .append(Component.text(this.worldToReadableString(e.getPlayer().getWorld().getName()), NamedTextColor.LIGHT_PURPLE))
                         .append(Component.text("!", NamedTextColor.AQUA))
         );
     }
 
-    private Component playerComponent(Player player) {
-        return Component.text(player.getName(), NamedTextColor.DARK_AQUA);
-    }
+
 
     private String worldToReadableString(String name) {
         switch (name) {
