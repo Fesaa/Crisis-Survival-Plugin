@@ -63,6 +63,9 @@ public class PlayerListener implements Listener {
         if (!e.getBedEnterResult().equals(PlayerBedEnterEvent.BedEnterResult.OK)) {
             return;
         }
+        if (!e.getPlayer().getWorld().getName().equals("world")) {
+            return;
+        }
         Server server = Bukkit.getServer();
 
         long now = System.currentTimeMillis();
@@ -72,9 +75,9 @@ public class PlayerListener implements Listener {
         }
         this.enterBedMessages.put(e.getPlayer(), now);
 
-        int onlinePlayers = server.getOnlinePlayers().size();
+        int onlinePlayers = e.getPlayer().getWorld().getPlayerCount();
         int sleepingPlayers = 1;
-        for (Player player : server.getOnlinePlayers()) {
+        for (Player player : e.getPlayer().getWorld().getPlayers()) {
             if (player.isSleeping()) {
                 sleepingPlayers++;
             }
@@ -89,6 +92,9 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerBedLeaveEvent(PlayerBedLeaveEvent e) {
+        if (!e.getPlayer().getWorld().getName().equals("world")) {
+            return;
+        }
         long now = System.currentTimeMillis();
         long lastEnter = this.leaveBedMessages.get(e.getPlayer());
         if (now - 1000*10 < lastEnter) {
@@ -98,9 +104,9 @@ public class PlayerListener implements Listener {
 
 
         Server server = Bukkit.getServer();
-        int onlinePlayers = server.getOnlinePlayers().size();
+        int onlinePlayers = e.getPlayer().getWorld().getPlayerCount();
         int sleepingPlayers = -1;
-        for (Player player : server.getOnlinePlayers()) {
+        for (Player player : e.getPlayer().getWorld().getPlayers()) {
             if (player.isSleeping()) {
                 sleepingPlayers++;
             }
