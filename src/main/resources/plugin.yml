@@ -1,0 +1,6 @@
+name: CrisisPlugin
+version: 1.0.0
+main: org.aameliah.crisisplugin.CrisisPlugin
+description: Custom survival plugin for extra crisis
+author: Fesaah
+api-version: 1.19
