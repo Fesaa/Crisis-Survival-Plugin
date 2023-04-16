@@ -3,6 +3,7 @@ package org.aameliah.crisisplugin.listeners;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.aameliah.crisisplugin.CrisisPlugin;
 import org.aameliah.crisisplugin.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -15,8 +16,14 @@ import java.util.HashMap;
 
 public class PlayerListener implements Listener {
 
+    private final CrisisPlugin plugin;
+
     private final HashMap<Player, Long> leaveBedMessages = new HashMap<>();
     private final HashMap<Player, Long> enterBedMessages = new HashMap<>();
+
+    public PlayerListener(CrisisPlugin plugin) {
+        this.plugin = plugin;
+    }
 
     @EventHandler
     public void onPlayerLoginEvent(PlayerLoginEvent e) {
@@ -33,7 +40,8 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         Server server = Bukkit.getServer();
-        Component joinMessage = Utils.playerComponent(e.getPlayer())
+        server.getScheduler().runTask(this.plugin, this.plugin.scoreboardRunnable);
+        Component joinMessage = Component.text(e.getPlayer().getName(), NamedTextColor.DARK_AQUA)
                 .append(Component.text(" has joined the ", NamedTextColor.AQUA))
                 .append(Utils.getCrisisServerColour())
                 .append(Component.text(" ", NamedTextColor.AQUA))
@@ -42,12 +50,14 @@ public class PlayerListener implements Listener {
                 .append(Component.text(server.getMaxPlayers(), NamedTextColor.AQUA))
                 .append(Component.text(" players online.", NamedTextColor.AQUA));
         e.joinMessage(joinMessage);
+
+
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
         Server server = Bukkit.getServer();
-        Component quitMessage = Utils.playerComponent(e.getPlayer())
+        Component quitMessage = Component.text(e.getPlayer().getName(), NamedTextColor.DARK_AQUA)
                 .append(Component.text(" has left the ", NamedTextColor.AQUA))
                 .append(Utils.getCrisisServerColour())
                 .append(Component.text(" ", NamedTextColor.AQUA))
@@ -56,6 +66,8 @@ public class PlayerListener implements Listener {
                 .append(Component.text(server.getMaxPlayers(), NamedTextColor.AQUA))
                 .append(Component.text(" players online.", NamedTextColor.AQUA));
         e.quitMessage(quitMessage);
+
+        server.getScheduler().runTask(this.plugin, this.plugin.scoreboardRunnable);
     }
 
     @EventHandler
@@ -131,7 +143,7 @@ public class PlayerListener implements Listener {
             return;
         }
         Bukkit.getServer().sendMessage(
-                Utils.playerComponent(e.getPlayer())
+                e.getPlayer().displayName()
                         .append(Component.text(" became level ", NamedTextColor.AQUA))
                         .append(Component.text(e.getNewLevel(), NamedTextColor.LIGHT_PURPLE))
                         .append(Component.text("!", NamedTextColor.AQUA))
@@ -141,11 +153,13 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerChangedWorldEvent(PlayerChangedWorldEvent e) {
         Bukkit.getServer().sendMessage(
-                Utils.playerComponent(e.getPlayer())
+                e.getPlayer().displayName()
                         .append(Component.text( " is now in the ", NamedTextColor.AQUA))
                         .append(Component.text(this.worldToReadableString(e.getPlayer().getWorld().getName()), NamedTextColor.LIGHT_PURPLE))
                         .append(Component.text("!", NamedTextColor.AQUA))
         );
+
+        Bukkit.getServer().getScheduler().runTask(this.plugin, this.plugin.scoreboardRunnable);
     }
 
 
@@ -158,7 +172,7 @@ public class PlayerListener implements Listener {
             case "world_nether" -> {
                 return "Nether";
             }
-            case "world_end" -> {
+            case "world_the_end" -> {
                 return "The End";
             }
         }

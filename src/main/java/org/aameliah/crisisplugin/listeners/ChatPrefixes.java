@@ -4,6 +4,7 @@ import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.aameliah.crisisplugin.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
@@ -15,41 +16,35 @@ public class ChatPrefixes implements Listener {
 
     @EventHandler
     public void onAsyncChatEvent(AsyncChatEvent e) {
+        Player player = e.getPlayer();
         e.setCancelled(true);
         Bukkit.getServer().sendMessage(
-                Component.text("[", NamedTextColor.WHITE)
-                .append(this.worldComponent(e.getPlayer().getWorld().getName()))
-                .append(Component.text("] ", NamedTextColor.WHITE))
-                .append(this.playerComponent(e.getPlayer()))
-                .append(e.originalMessage()));
+                this.worldComponent(player.getWorld().getName())
+                .append(player.displayName()
+                        .hoverEvent(HoverEvent.showText(
+                                Component.text("Level: ", NamedTextColor.DARK_AQUA)
+                            .append(Component.text(player.getLevel(), NamedTextColor.AQUA))
+                            .appendNewline()
+                            .append(Component.text("Deaths: ", NamedTextColor.DARK_AQUA))
+                            .append(Component.text(player.getStatistic(Statistic.DEATHS), NamedTextColor.AQUA))
+                            .appendNewline()
+                            .append(Component.text("Mob kills: ", NamedTextColor.DARK_AQUA))
+                            .append(Component.text(player.getStatistic(Statistic.MOB_KILLS), NamedTextColor.AQUA))
+                )))
+                .append(Component.text(": ", NamedTextColor.GRAY))
+                .append(e.originalMessage().color(NamedTextColor.WHITE)));
     }
-
-    private Component playerComponent(Player player) {
-        return Component.text(player.getName(), NamedTextColor.DARK_AQUA)
-                .hoverEvent(HoverEvent.showText(
-                        Component.text("Level: ", NamedTextColor.DARK_AQUA)
-                                .append(Component.text(player.getLevel(), NamedTextColor.AQUA))
-                                .appendNewline()
-                                .append(Component.text("Deaths: ", NamedTextColor.DARK_AQUA))
-                                .append(Component.text(player.getStatistic(Statistic.DEATHS), NamedTextColor.AQUA))
-                                .appendNewline()
-                                .append(Component.text("Mob kills: ", NamedTextColor.DARK_AQUA))
-                                .append(Component.text(player.getStatistic(Statistic.MOB_KILLS), NamedTextColor.AQUA))
-                ))
-                .append(Component.text(": ", NamedTextColor.GRAY));
-    }
-
 
     private Component worldComponent(String name) {
         switch (name) {
             case "world" -> {
-                return Component.text("Overworld", NamedTextColor.GREEN);
+                return Utils.overworldPrefix;
             }
             case "world_nether" -> {
-                return Component.text("Nether", NamedTextColor.DARK_RED);
+                return Utils.netherPrefix;
             }
-            case "world_end" -> {
-                return Component.text("The End", NamedTextColor.DARK_PURPLE);
+            case "world_the_end" -> {
+                return Utils.endPrefix;
             }
         }
         return Component.text("Unknown", NamedTextColor.WHITE);
