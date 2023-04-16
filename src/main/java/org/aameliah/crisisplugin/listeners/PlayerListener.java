@@ -110,7 +110,7 @@ public class PlayerListener implements Listener {
         if (!e.getPlayer().getWorld().getName().equals("world")) {
             return;
         }
-        if (!e.getPlayer().getWorld().isDayTime()) {
+        if (e.getPlayer().getWorld().isDayTime()) {
             return;
         }
         long now = System.currentTimeMillis();
