@@ -69,7 +69,10 @@ public class PlayerListener implements Listener {
         Server server = Bukkit.getServer();
 
         long now = System.currentTimeMillis();
-        long lastEnter = this.enterBedMessages.get(e.getPlayer());
+        Long lastEnter = this.enterBedMessages.get(e.getPlayer());
+        if (lastEnter == null) {
+            lastEnter = -1L;
+        }
         if (now - 1000*10 < lastEnter) {
             return;
         }
@@ -96,7 +99,10 @@ public class PlayerListener implements Listener {
             return;
         }
         long now = System.currentTimeMillis();
-        long lastEnter = this.leaveBedMessages.get(e.getPlayer());
+        Long lastEnter = this.leaveBedMessages.get(e.getPlayer());
+        if (lastEnter == null) {
+            lastEnter = -1L;
+        }
         if (now - 1000*10 < lastEnter) {
             return;
         }
